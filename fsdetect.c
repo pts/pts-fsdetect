@@ -8,7 +8,7 @@ void fsdetect(read_block_t read_block, void *read_block_data,
   if (fsdetect_fat(read_block, read_block_data, fsdo) != 0 &&
       fsdetect_ext(read_block, read_block_data, fsdo) != 0 &&
       fsdetect_ntfs(read_block, read_block_data, fsdo) != 0 &&
-      1 /* fsdetect_btrfs(read_block, read_block_data, fsdo) != 0 */) {
+      fsdetect_btrfs(read_block, read_block_data, fsdo) != 0) {
     memset(fsdo, '\0', sizeof(*fsdo));
     fsdo->fstype[0] = '?';
   }
