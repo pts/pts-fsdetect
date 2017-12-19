@@ -222,6 +222,7 @@ int fsdetect_ext(read_block_t read_block, void *read_block_data,
   memcpy(fsdo->uuid, sb.s_uuid, 16);
   fsdo->uuid_size = 16;
   strncpy(fsdo->label, sb.s_volume_name, 16);
+  fsdo->label[16] = '\0';
   return 0;  /* Success. */
 }
 

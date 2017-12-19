@@ -41,5 +41,7 @@ int fsdetect_ext(read_block_t read_block, void *read_block_data,
                  struct fsdetect_output *fsdo);
 int fsdetect_ntfs(read_block_t read_block, void *read_block_data,
                   struct fsdetect_output *fsdo);
+int fsdetect_fat(read_block_t read_block, void *read_block_data,
+                 struct fsdetect_output *fsdo);
 
 #endif /* _FSDETECT_IMPL_H */

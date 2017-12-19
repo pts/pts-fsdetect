@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS =
-FSDETECT_SOURCES = fsdetect_main.c fsdetect.c fsdetect_ext.c fsdetect_ntfs.c
+FSDETECT_SOURCES = fsdetect_main.c fsdetect.c fsdetect_ext.c fsdetect_ntfs.c fsdetect_fat.c
 
 .PHONY: clean
 
