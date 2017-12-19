@@ -29,8 +29,12 @@ int main(int argc, char **argv) {
     printf("uuid=\n");
   } else if (fsdo.uuid_size == 4) {
     const unsigned char *up = fsdo.uuid;
-    printf("uuid=%02x%02x-%02x%02x\n",
+    printf("uuid=%02X%02X-%02X%02X\n",
            up[0], up[1], up[2], up[3]);
+  } else if (fsdo.uuid_size == 8) {  /* NTFS. */
+    const unsigned char *up = fsdo.uuid;
+    printf("uuid=%02X%02X%02X%02X%02X%02X%02X%02X\n",
+           up[0], up[1], up[2], up[3], up[4], up[5], up[6], up[7]);
   } else if (fsdo.uuid_size == 16) {
     const unsigned char *up = fsdo.uuid;
     printf("uuid=%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-"

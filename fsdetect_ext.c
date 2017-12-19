@@ -1,4 +1,7 @@
 #include <string.h>
+#ifdef DEBUG
+#include <stdio.h>
+#endif
 #include "fsdetect_impl.h"
 
 struct ext2_super_block {
@@ -189,7 +192,7 @@ int fsdetect_ext(read_block_t read_block, void *read_block_data,
   printf("s_raid_stripe_width=%u\n", le32(sb.s_raid_stripe_width));
 #endif
 
-  /* Extra checks missing from util-linux-2.31/libblkid/src/superblocks/ext.c */
+  /* --- Extra checks missing from util-linux. */
 
   if (le(sb.s_inode_size) < 128 || !is_power_of_2(le(sb.s_inode_size))
      ) return 12;
