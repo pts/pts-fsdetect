@@ -129,15 +129,22 @@ int fsdetect_fat(read_block_t read_block, void *read_block_data,
   } else {
     return 13;
   }
+  reserved =  le16(sb.ms_reserved);
+  dir_entries = unaligned_le16(sb.ms_dir_entries);
+  sect_count = unaligned_le16(sb.ms_sectors);
+  if (sect_count == 0)
+    sect_count = le32(sb.ms_total_sect);
 
   if (sb.ms_fats - 1U > 2 - 1U)
     return 14;
-  if (!sb.ms_reserved)
+  if (!reserved)
     return 15;
   if (!(0xf8 <= sb.ms_media || sb.ms_media == 0xf0))
     return 16;
   if (!is_power_of_2(sb.ms_cluster_size))
     return 17;
+  if (fat_bits != 32 && dir_entries == 0)
+    return 31;
 
   sector_size = unaligned_le16(sb.ms_sector_size);
   switch (sector_size) {
@@ -147,13 +154,8 @@ int fsdetect_fat(read_block_t read_block, void *read_block_data,
    default:
     return 18;
   }
-
-  dir_entries = unaligned_le16(sb.ms_dir_entries);
-  reserved =  le16(sb.ms_reserved);
-  sect_count = unaligned_le16(sb.ms_sectors);
-
-  if (sect_count == 0)
-    sect_count = le32(sb.ms_total_sect);
+  if (fat_bits != 32 && (dir_entries * 32 % sector_size) != 0)
+    return 32;
 
   fat_length = le16(sb.ms_fat_length);
   if (fat_length == 0) {
