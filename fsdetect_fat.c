@@ -167,8 +167,12 @@ int fsdetect_fat(read_block_t read_block, void *read_block_data,
   dir_size = ((dir_entries * 32) +
           (sector_size-1)) / sector_size;
 
-  cluster_count = (sect_count - (reserved + fat_size + dir_size)) /
-              sb.ms_cluster_size;
+  cluster_count = sect_count - (reserved + fat_size + dir_size);
+  if ((int32_t)cluster_count <= 0) return 24;
+#if 0  /* TODO(pts): Are there any unused sectors in the end? */
+  if (cluster_count % sb.ms_cluster_size != 0) return 25;
+#endif
+  cluster_count /= sb.ms_cluster_size;
   if (fat_bits == 126) {
     if (cluster_count > FAT12_MAX) {
       fat_bits = 16;
