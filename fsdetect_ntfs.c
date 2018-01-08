@@ -35,7 +35,8 @@ struct ntfs_super_block {
   uint8_t   reserved2[3];
   uint64_t  volume_serial;
   uint32_t  checksum;
-  char      padding[428];  /* Pad it to 512 bytes. */
+  char      padding[426];  /* Pad it to 512 bytes. */
+  uint16_t  boot_signature;
 } __attribute__((packed));
 
 struct master_file_table_record {
@@ -62,6 +63,9 @@ struct file_attribute {
   uint32_t  value_len;
   uint16_t  value_offset;
 } __attribute__((__packed__));
+
+struct Assert512BytesStruct {
+     int Assert512Bytes : sizeof(struct ntfs_super_block) == 512; };
 
 #define MFT_RECORD_VOLUME  3
 #define NTFS_MAX_CLUSTER_SIZE  (64 * 1024)
@@ -122,6 +126,9 @@ int fsdetect_ntfs(read_block_t read_block, void *read_block_data,
 
   if (!(0xf8 <= sb.bpb.media_type || sb.bpb.media_type == 0xf0))
     return 22;
+
+  if (le16(sb.boot_signature) != 0xaa55)
+    return 23;
 
   if ((uint8_t) sb.clusters_per_mft_record < 0xe1
       || (uint8_t) sb.clusters_per_mft_record > 0xf7) {

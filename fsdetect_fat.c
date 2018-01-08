@@ -55,7 +55,7 @@ struct fat_super_block {  /* 512 bytes. */
       /* 5a*/  unsigned char dummy2[0x1fe - 0x5a];
     } __attribute__((packed)) f32;
   } fat;
-  /*1fe*/  unsigned char  ms_pmagic[2];
+  /*1fe*/ uint16_t ms_boot_signature;
 } __attribute__((packed));
 
 struct Assert512BytesStruct {
@@ -141,6 +141,8 @@ int fsdetect_fat(read_block_t read_block, void *read_block_data,
     return 17;
   if (fat_bits != 32 && dir_entries == 0)
     return 31;
+  if (le16(sb.ms_boot_signature) != 0xaa55)
+    return 33;
 
   sector_size = unaligned_le16(sb.ms_sector_size);
   switch (sector_size) {
