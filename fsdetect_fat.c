@@ -1,7 +1,3 @@
-#include <string.h>
-#ifdef DEBUG
-#include <stdio.h>
-#endif
 #include "fsdetect_impl.h"
 
 /* https://en.wikipedia.org/wiki/BIOS_parameter_block

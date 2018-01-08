@@ -1,7 +1,3 @@
-#include <string.h>
-#ifdef DEBUG
-#include <stdio.h>
-#endif
 #include "fsdetect_impl.h"
 
 struct ext2_super_block {

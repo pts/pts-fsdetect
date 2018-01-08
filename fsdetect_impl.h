@@ -3,6 +3,18 @@
 
 #include "fsdetect.h"
 
+#ifdef __XTINY__
+#include <xtiny.h>
+#ifdef DEBUG
+#error __XTINY__ does not support DEBUG.
+#endif
+#else
+#include <string.h>
+#ifdef DEBUG
+#include <stdio.h>
+#endif
+#endif
+
 /* gcc-4.8.4 has __BYTE_ORDER__, gcc-4.4.3 doesn't have it. */
 #if defined(__i386) || defined(__amd64) || (__BYTE_ORDER__ && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
   #define le64(x) ((uint64_t)(x))

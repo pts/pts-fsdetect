@@ -13,6 +13,8 @@ fsdetect.yes: $(FSDETECT_SOURCES)
 fsdetect.xstatic: $(FSDETECT_SOURCES)
 	xstatic gcc -s -O2 -W -Wall -Wextra -Werror -ansi -pedantic $(CFLAGS) -o $@ $(FSDETECT_SOURCES)
 
-clean:
-	rm -f fsdetect fsdetect.xstatic
+fsdetect.xtiny: $(FSDETECT_SOURCES)
+	xtiny gcc -s -Os -W -Wall -Wextra -Werror -ansi -pedantic $(CFLAGS) -o $@ $(FSDETECT_SOURCES)
 
+clean:
+	rm -f fsdetect fsdetect.xstatic fsdetect.xtiny

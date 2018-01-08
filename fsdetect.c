@@ -1,4 +1,3 @@
-#include <string.h>
 #include "fsdetect_impl.h"
 
 void fsdetect(read_block_t read_block, void *read_block_data,

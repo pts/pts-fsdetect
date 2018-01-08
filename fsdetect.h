@@ -1,7 +1,11 @@
 #ifndef _FSDETECT_H
 #define _FSDETECT_H 1
 
+#ifdef __XTINY__
+#include <xtiny.h>
+#else
 #include <stdint.h>
+#endif
 
 struct fsdetect_output {
   char fstype[14];  /* e.g. "ext2". */
