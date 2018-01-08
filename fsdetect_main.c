@@ -1,3 +1,7 @@
+/* TODO(pts): Add option to produce output in the blkid syntax.
+ * fs.fat16: SEC_TYPE="msdos" LABEL="mylabel" UUID="EABC-AF1F" TYPE="vfat" 
+ */
+
 /* No need for this, we don't seek too far: #define _FILE_OFFSET_BITS 64 */
 #ifdef __XTINY__
 #include <xtiny.h>
