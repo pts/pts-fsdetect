@@ -5,12 +5,12 @@
 #include "fsdetect_impl.h"
 
 struct ntfs_bios_parameters {
-  uint16_t  sector_size;  /* Size of a sector in bytes. */
+  uint16_t  sector_size;  /* Size of a sector in bytes. Unaligned. */
   uint8_t   sectors_per_cluster;  /* Size of a cluster in sectors. */
   uint16_t  reserved_sectors;  /* zero */
   uint8_t   fats;      /* zero */
-  uint16_t  root_entries;    /* zero */
-  uint16_t  sectors;    /* zero */
+  uint16_t  root_entries;    /* zero. Unaligned. */
+  uint16_t  sectors;    /* zero. Unaligned. */
   uint8_t   media_type;    /* 0xf8 = hard disk */
   uint16_t  sectors_per_fat;  /* zero */
   uint16_t  sectors_per_track;  /* irrelevant */
@@ -89,7 +89,7 @@ int fsdetect_ntfs(read_block_t read_block, void *read_block_data,
   /*
    * Check bios parameters block
    */
-  sector_size = le16(sb.bpb.sector_size);
+  sector_size = unaligned_le16(sb.bpb.sector_size);
   sectors_per_cluster = sb.bpb.sectors_per_cluster;
 
   /* This is more strict than util-linux. */
@@ -113,8 +113,8 @@ int fsdetect_ntfs(read_block_t read_block, void *read_block_data,
 
   /* Unused fields must be zero */
   if (le(sb.bpb.reserved_sectors)  /* FAT12, FAT16 and FAT32 have >=1 here. */
-      || le(sb.bpb.root_entries)
-      || le(sb.bpb.sectors)
+      || unaligned_le16(sb.bpb.root_entries)
+      || unaligned_le16(sb.bpb.sectors)
       || le(sb.bpb.sectors_per_fat)
       || le(sb.bpb.large_sectors)
       || sb.bpb.fats)  /* FAT12, FAT16 and FAT32 have 1 or 2 here. */

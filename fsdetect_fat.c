@@ -12,12 +12,12 @@
 struct fat_super_block {  /* 512 bytes. */
   /* 00*/  unsigned char  ms_jump[3];
   /* 03*/  unsigned char  ms_sysid[8];
-  /* 0b*/  unsigned char  ms_sector_size[2];
+  /* 0b*/  uint16_t   ms_sector_size;  /* Unaligned. */
   /* 0d*/  uint8_t    ms_cluster_size;
-  /* 0e*/  uint16_t  ms_reserved;
+  /* 0e*/  uint16_t   ms_reserved;
   /* 10*/  uint8_t    ms_fats;
-  /* 11*/  unsigned char  ms_dir_entries[2];
-  /* 13*/  unsigned char  ms_sectors[2]; /* =0 iff V3 or later */
+  /* 11*/  uint16_t   ms_root_entries;  /* Unaligned. */
+  /* 13*/  uint16_t   ms_sectors; /* Unaligned. =0 iff V3 or later */
   /* 15*/  unsigned char  ms_media;
   /* 16*/  uint16_t  ms_fat_length; /* Sectors per FAT */
   /* 18*/  uint16_t  ms_secs_track;
@@ -83,13 +83,6 @@ struct AssertFsi512BytesStruct {
 
 static const char no_name[] = "NO NAME    ";
 
-#if defined(__i386) || defined(__amd64)
-  #define unaligned_le16(x) __extension__ ({ char *p = (char*)(x); *(uint16_t*)p; })
-#else
-  #define unaligned_le16(x) \
-      (((unsigned char *) x)[0] + (((unsigned char *) x)[1] << 8))
-#endif
-
 int fsdetect_fat(read_block_t read_block, void *read_block_data,
                  struct fsdetect_output *fsdo) {
   struct fat_super_block sb;
@@ -130,7 +123,7 @@ int fsdetect_fat(read_block_t read_block, void *read_block_data,
     return 13;
   }
   reserved = le16(sb.ms_reserved);
-  dir_entries = unaligned_le16(sb.ms_dir_entries);
+  dir_entries = unaligned_le16(sb.ms_root_entries);
   sect_count = unaligned_le16(sb.ms_sectors);
   if (sect_count == 0)
     sect_count = le32(sb.ms_total_sect);

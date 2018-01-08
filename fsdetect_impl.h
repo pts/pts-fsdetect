@@ -29,6 +29,13 @@
   #define le(x) __error_missing_le__
 #endif
 
+#if defined(__i386) || defined(__amd64)
+  #define unaligned_le16(x) __extension__ ({ char *p = (char*)&(x); *(uint16_t*)p; })
+#else
+  #define unaligned_le16(x) \
+      (((unsigned char*)x)[0] + (((unsigned char*)x)[1] << 8))
+#endif
+
 #define is_power_of_2(x0) __extension__ ({ const __typeof__(x0) x = (x0); \
     (x != 0) && (x & (x - 1)) == 0; })
 
