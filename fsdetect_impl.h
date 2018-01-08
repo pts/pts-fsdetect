@@ -30,7 +30,7 @@
 #endif
 
 #define is_power_of_2(x0) __extension__ ({ const __typeof__(x0) x = (x0); \
-    (x & (x - 1)) == 0; })
+    (x != 0) && (x & (x - 1)) == 0; })
 
 static __inline__ char is_less_hilo(uint32_t ahi, uint32_t alo,
                                     uint32_t bhi, uint32_t blo) {
