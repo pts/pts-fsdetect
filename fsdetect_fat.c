@@ -154,8 +154,10 @@ int fsdetect_fat(read_block_t read_block, void *read_block_data,
    default:
     return 18;
   }
+/* Don't check, mkfs.vfat can create a different one.
   if (fat_bits != 32 && (dir_entries * 32 % sector_size) != 0)
     return 32;
+*/
 
   fat_length = le16(sb.ms_fat_length);
   if (fat_length == 0) {
