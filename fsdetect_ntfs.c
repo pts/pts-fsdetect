@@ -112,12 +112,12 @@ int fsdetect_ntfs(read_block_t read_block, void *read_block_data,
     return 13;
 
   /* Unused fields must be zero */
-  if (le(sb.bpb.reserved_sectors)
+  if (le(sb.bpb.reserved_sectors)  /* FAT12, FAT16 and FAT32 have >=1 here. */
       || le(sb.bpb.root_entries)
       || le(sb.bpb.sectors)
       || le(sb.bpb.sectors_per_fat)
       || le(sb.bpb.large_sectors)
-      || sb.bpb.fats)
+      || sb.bpb.fats)  /* FAT12, FAT16 and FAT32 have 1 or 2 here. */
     return 14;
 
   if (!(0xf8 <= sb.bpb.media_type || sb.bpb.media_type == 0xf0))

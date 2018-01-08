@@ -123,21 +123,21 @@ int fsdetect_fat(read_block_t read_block, void *read_block_data,
     strcpy(fsdo->fstype, "fat16");
     max_count = FAT16_MAX;
   } else if (0 == memcmp(sb.fat.f1x.magic, "MSDOS   ", 8)) {
-    fat_bits = 126;
+    fat_bits = 126;  /* We'll figure it out later. */
     strcpy(fsdo->fstype, "fat12");
     max_count = FAT12_MAX;
   } else {
     return 13;
   }
-  reserved =  le16(sb.ms_reserved);
+  reserved = le16(sb.ms_reserved);
   dir_entries = unaligned_le16(sb.ms_dir_entries);
   sect_count = unaligned_le16(sb.ms_sectors);
   if (sect_count == 0)
     sect_count = le32(sb.ms_total_sect);
 
-  if (sb.ms_fats - 1U > 2 - 1U)
+  if (sb.ms_fats - 1U > 2 - 1U)  /* NTFS has 0 here. */
     return 14;
-  if (!reserved)
+  if (!reserved)  /* NTFS has 0 here. */
     return 15;
   if (!(0xf8 <= sb.ms_media || sb.ms_media == 0xf0))
     return 16;
