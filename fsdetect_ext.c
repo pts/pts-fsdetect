@@ -4,6 +4,7 @@
 #pragma pack(push, 1)
 #endif
 
+/* Bytes 0x400...0x600. */
 struct ext2_super_block {
   uint32_t    s_inodes_count;
   uint32_t    s_blocks_count;
@@ -59,7 +60,7 @@ struct ext2_super_block {
   uint32_t    s_mmp_block_a;
   uint32_t    s_mmp_block_b;
   uint32_t    s_raid_stripe_width;
-  uint32_t    s_reserved[163];
+  uint32_t    s_reserved[35];
 } __attribute__((packed));
 
 #if defined(__TINYC__)
@@ -67,7 +68,7 @@ struct ext2_super_block {
 #endif
 
 struct Assert512BytesStruct {
-   int Assert512Bytes : sizeof(struct ext2_super_block) == 1024; };
+   int Assert512Bytes : sizeof(struct ext2_super_block) == 512; };
 
 /* magic string */
 #define EXT_SB_MAGIC        "\123\357"
@@ -125,7 +126,7 @@ int fsdetect_ext(read_block_t read_block, void *read_block_data,
                  struct fsdetect_output *fsdo) {
   struct ext2_super_block sb;
   uint32_t fc, fi, frc;
-  if (read_block(read_block_data, 2, 2, &sb) != 0) return -1;
+  if (read_block(read_block_data, 2, 1, &sb) != 0) return -1;
   /* http://www.nongnu.org/ext2-doc/ext2.html */
   if ((uint8_t)sb.s_magic[0] != 0x53 || (uint8_t)sb.s_magic[1] != 0xef
      ) return 10;
