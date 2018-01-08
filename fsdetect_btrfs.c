@@ -1,5 +1,9 @@
 #include "fsdetect_impl.h"
 
+#if defined(__TINYC__)
+#pragma pack(push, 1)
+#endif
+
 struct btrfs_super_block {
   uint8_t csum[32];
   uint8_t fsid[16];
@@ -52,8 +56,12 @@ struct btrfs_super_block {
   uint8_t label[213];
 } __attribute__ ((__packed__));
 
+#if defined(__TINYC__)
+#pragma pack(pop)
+#endif
+
 struct Assert512BytesStruct {
-     int Assert512Bytes : sizeof(struct btrfs_super_block) == 512; };
+   int Assert512Bytes : sizeof(struct btrfs_super_block) == 512; };
 
 /* Code based on util-linux-2.31/libblkid/src/superblocks/btrfs.c */
 int fsdetect_btrfs(read_block_t read_block, void *read_block_data,

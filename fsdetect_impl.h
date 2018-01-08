@@ -9,9 +9,31 @@
 #error __XTINY__ does not support DEBUG.
 #endif
 #else
+#ifdef __TINYC__
+typedef unsigned int size_t;
+/* Doesn't seem to be needed:
+typedef unsigned char uint8_t;
+typedef char int8_t;
+typedef unsigned short uint16_t;
+typedef short int16_t;
+typedef unsigned long uint32_t;
+typedef long int32_t;
+typedef unsigned long long uint64_t;
+typedef long long int64_t;
+*/
+extern void *memset(void *__s, int __c, size_t __n) __attribute__ ((__nothrow__)) __attribute__ ((__nonnull__ (1)));
+extern void *memcpy(void *__restrict __dest, __const void *__restrict __src, size_t __n) __attribute__ ((__nothrow__)) __attribute__ ((__nonnull__ (1, 2)));
+extern char *strcpy(char *__restrict __dest, __const char *__restrict __src) __attribute__ ((__nothrow__)) __attribute__ ((__nonnull__ (1, 2)));
+extern char *strncpy(char *__restrict __dest, __const char *__restrict __src, size_t __n) __attribute__ ((__nothrow__)) __attribute__ ((__nonnull__ (1, 2)));
+extern int memcmp (__const void *__s1, __const void *__s2, size_t __n) __attribute__ ((__nothrow__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+#ifdef DEBUG
+extern int printf (__const char *__restrict __format, ...);
+#endif
+#else
 #include <string.h>
 #ifdef DEBUG
 #include <stdio.h>
+#endif
 #endif
 #endif
 

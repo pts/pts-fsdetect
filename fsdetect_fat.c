@@ -1,5 +1,9 @@
 #include "fsdetect_impl.h"
 
+#if defined(__TINYC__)
+#pragma pack(push, 1)
+#endif
+
 /* https://en.wikipedia.org/wiki/BIOS_parameter_block
  *
  * We don't detect very old versions of FAT such as those created by MS-DOS
@@ -54,8 +58,12 @@ struct fat_super_block {  /* 512 bytes. */
   /*1fe*/ uint16_t ms_boot_signature;
 } __attribute__((packed));
 
+#if defined(__TINYC__)
+#pragma pack(pop)
+#endif
+
 struct Assert512BytesStruct {
-     int Assert512Bytes : sizeof(struct fat_super_block) == 512; };
+   int Assert512Bytes : sizeof(struct fat_super_block) == 512; };
 
 struct fat32_fsinfo {
   uint8_t signature1[4];
@@ -90,8 +98,8 @@ int fsdetect_fat(read_block_t read_block, void *read_block_data,
   uint32_t max_count;
   uint8_t fat_bits;
   uint16_t fsinfo_sect;
-  const unsigned char *vol_label = NULL;
-  unsigned char *vol_serno = NULL;
+  const unsigned char *vol_label = 0;
+  unsigned char *vol_serno = 0;
 
   if (read_block(read_block_data, 0, 1, &sb) != 0) return 10;
   if (!(sb.ms_jump[0] == (unsigned char)'\xeb' && sb.ms_jump[2] == (unsigned char)'\x90') &&

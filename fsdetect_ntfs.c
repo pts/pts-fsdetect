@@ -1,5 +1,9 @@
 #include "fsdetect_impl.h"
 
+#if defined(__TINYC__)
+#pragma pack(push, 1)
+#endif
+
 struct ntfs_bios_parameters {
   uint16_t  sector_size;  /* Size of a sector in bytes. Unaligned. */
   uint8_t   sectors_per_cluster;  /* Size of a cluster in sectors. */
@@ -60,8 +64,12 @@ struct file_attribute {
   uint16_t  value_offset;
 } __attribute__((__packed__));
 
+#if defined(__TINYC__)
+#pragma pack(pop)
+#endif
+
 struct Assert512BytesStruct {
-     int Assert512Bytes : sizeof(struct ntfs_super_block) == 512; };
+   int Assert512Bytes : sizeof(struct ntfs_super_block) == 512; };
 
 #define MFT_RECORD_VOLUME  3
 #define NTFS_MAX_CLUSTER_SIZE  (64 * 1024)

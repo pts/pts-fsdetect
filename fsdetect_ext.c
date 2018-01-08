@@ -1,5 +1,9 @@
 #include "fsdetect_impl.h"
 
+#if defined(__TINYC__)
+#pragma pack(push, 1)
+#endif
+
 struct ext2_super_block {
   uint32_t    s_inodes_count;
   uint32_t    s_blocks_count;
@@ -58,6 +62,13 @@ struct ext2_super_block {
   uint32_t    s_reserved[163];
 } __attribute__((packed));
 
+#if defined(__TINYC__)
+#pragma pack(pop)
+#endif
+
+struct Assert512BytesStruct {
+   int Assert512Bytes : sizeof(struct ext2_super_block) == 1024; };
+
 /* magic string */
 #define EXT_SB_MAGIC        "\123\357"
 /* supper block offset */
@@ -114,7 +125,7 @@ int fsdetect_ext(read_block_t read_block, void *read_block_data,
                  struct fsdetect_output *fsdo) {
   struct ext2_super_block sb;
   uint32_t fc, fi, frc;
-  if (read_block(read_block_data, 2, 1, &sb) != 0) return -1;
+  if (read_block(read_block_data, 2, 2, &sb) != 0) return -1;
   /* http://www.nongnu.org/ext2-doc/ext2.html */
   if ((uint8_t)sb.s_magic[0] != 0x53 || (uint8_t)sb.s_magic[1] != 0xef
      ) return 10;

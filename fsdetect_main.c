@@ -2,9 +2,22 @@
 #ifdef __XTINY__
 #include <xtiny.h>
 #else
+#ifdef __TINYC__
+typedef long off_t;
+typedef unsigned int size_t;
+typedef int ssize_t;
+extern off_t lseek(int __fd, off_t __offset, int __whence) __attribute__ ((__nothrow__));
+extern void *memset(void *__s, int __c, size_t __n) __attribute__ ((__nothrow__)) __attribute__ ((__nonnull__ (1)));
+extern ssize_t read(int __fd, void *__buf, size_t __nbytes) ;
+extern size_t strlen(__const char *__s) __attribute__ ((__nothrow__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern void *memcpy(void *__restrict __dest, __const void *__restrict __src, size_t __n) __attribute__ ((__nothrow__)) __attribute__ ((__nonnull__ (1, 2)));
+extern ssize_t write(int __fd, __const void *__buf, size_t __n) ;
+#define SEEK_SET 0
+#else
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#endif
 #endif
 #include "fsdetect.h"
 
