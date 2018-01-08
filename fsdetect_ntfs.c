@@ -33,9 +33,9 @@ struct ntfs_super_block {
   uint8_t   reserved1[3];
   int8_t    cluster_per_index_record;
   uint8_t   reserved2[3];
-  uint64_t  volume_serial;
+  uint8_t   volume_serial[8];
   uint32_t  checksum;
-  char      padding[426];  /* Pad it to 512 bytes. */
+  uint8_t   padding[426];  /* Pad it to 512 bytes. */
   uint16_t  boot_signature;
 } __attribute__((packed));
 
@@ -225,20 +225,11 @@ int fsdetect_ntfs(read_block_t read_block, void *read_block_data,
   }
 
   fsdo->uuid_size = 8;
-#if defined(__i386) || defined(__amd64)
   {
-    char *p = (char*)fsdo->uuid;
-    *(uint64_t*)p = le64(sb.volume_serial);
+    const uint8_t *q = sb.volume_serial;
+    uint8_t *pend = fsdo->uuid, *p = pend + 8;
+    /* Emit it in the same order as /sbin/blkid and Busybox blkid does. */
+    for (; p != pend; *--p = *q++) {}
   }
-#else
-  {
-    const uint64_t s = le64(sb.volume_serial);
-    unsigned u;
-    uint8_t *p = fsdo->uuid + 7;
-    for (u = 0; u < 64; u += 8) {
-      *p-- = s >> u;
-    }
-  }
-#endif
   return 0;
 }
