@@ -120,6 +120,9 @@ int fsdetect_ntfs(read_block_t read_block, void *read_block_data,
       || sb.bpb.fats)
     return 14;
 
+  if (!(0xf8 <= sb.bpb.media_type || sb.bpb.media_type == 0xf0))
+    return 22;
+
   if ((uint8_t) sb.clusters_per_mft_record < 0xe1
       || (uint8_t) sb.clusters_per_mft_record > 0xf7) {
 
