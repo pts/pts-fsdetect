@@ -1,4 +1,4 @@
-#define FILE_OFFSET_BITS 64
+#define _FILE_OFFSET_BITS 64
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
