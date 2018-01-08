@@ -6,6 +6,9 @@
 
 /* https://en.wikipedia.org/wiki/BIOS_parameter_block
  *
+ * We don't detect very old versions of FAT such as those created by MS-DOS
+ * earlier than 4.0.
+ *
  * We don't use the term VFAT, because it's related to long filenames, about
  * which we don't care here.
  */
@@ -49,7 +52,7 @@ struct fat_super_block {  /* 512 bytes. */
       /* 43*/  unsigned char serno[4];
       /* 47*/  unsigned char label[11];
       /* 52*/  unsigned char magic[8];
-      /* 5a*/  unsigned char dummy2[0x1fe - 0x5a];  /* !! SUXX: why does gcc add padding to the end? */
+      /* 5a*/  unsigned char dummy2[0x1fe - 0x5a];
     } __attribute__((packed)) f32;
   } fat;
   /*1fe*/  unsigned char  ms_pmagic[2];
@@ -105,7 +108,7 @@ int fsdetect_fat(read_block_t read_block, void *read_block_data,
     fat_bits = 32;
     strcpy(fsdo->fstype, "fat32");
     max_count = FAT32_MAX;
-  } else if (sb.fat.f1x.signature != 0x29) {
+  } else if (sb.fat.f1x.signature != 0x29) {  /* MS-DOS >=4.0 */
     return 12;
   } else if (0 == memcmp(sb.fat.f1x.magic, "FAT12   ", 8)) {
     fat_bits = 12;
@@ -181,7 +184,6 @@ int fsdetect_fat(read_block_t read_block, void *read_block_data,
   }
   if (cluster_count > max_count) return 20;
 
-  /* !! Get label from the header. */
   if (fat_bits != 32) {
     /* There is also a label in the root directory, but we use the one in
      * the boot sector, for simplicity.
@@ -221,7 +223,7 @@ int fsdetect_fat(read_block_t read_block, void *read_block_data,
   }
 
   fsdo->uuid_size = 4;
-  fsdo->uuid[3] = *vol_serno++;
+  fsdo->uuid[3] = *vol_serno++;  /* Same order as mdir and blkid. */
   fsdo->uuid[2] = *vol_serno++;
   fsdo->uuid[1] = *vol_serno++;
   fsdo->uuid[0] = *vol_serno++;
